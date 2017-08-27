@@ -1,0 +1,19 @@
+{
+  "name": "trade-bit2c",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bit2c": "0.0.6",
+    "bitstamp": "^1.0.2",
+    "chalk": "^2.1.0",
+    "get-exchange-rates-usd": "^1.0.0",
+    "moment": "^2.18.1",
+    "mysql": "^2.14.1"
+  }
+}
