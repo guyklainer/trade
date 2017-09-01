@@ -12,25 +12,30 @@
 			jQuery.ajax({
 				url: "/chart" + document.location.search,
 				success: function( result ) {
-					console.log(result.bids
-						.filter(item => item.x && item.y)
-						.map(item => {
-							item.x = new Date(item.x);
-							return item;
-						}));
 					var chart = new CanvasJS.Chart("chartContainer", {
 						title: {
 							text: "Test",
 							fontSize: 30
+						},
+						toolTip: {
+							shared: true,
+							contentFormatter: e => {
+								var str = `${e.entries[0].dataPoint.dateString}<br>`;
+								for (var i = 0; i < e.entries.length; i++){
+									var  temp = `<span style="color: ${e.entries[i].dataSeries.color}">${e.entries[i].dataSeries.name}:</span> ${e.entries[i].dataPoint.y}`;
+									if(i == 0 || i == 2 )
+										temp += ` (${((100*(e.entries[i].dataPoint.y/e.entries[1].dataPoint.y))-100).toFixed(2)}%)`;
+
+									str = str.concat(`${temp}<br>`);
+								}
+								return (str);
+							}
 						},
 						animationEnabled: true,
 						axisX: {
 							gridColor: "Silver",
 							tickColor: "silver",
 							valueFormatString: "DD/MM HH:mm:ss"
-						},
-						toolTip: {
-							shared: true
 						},
 						theme: "theme2",
 						axisY: {
@@ -47,12 +52,13 @@
 								type: "line",
 								showInLegend: true,
 								lineThickness: 2,
-								name: "Bid",
+								name: "Ask",
 								markerType: "square",
 								color: "#F08080",
-								dataPoints: result.bids
+								dataPoints: result.asks
 									.filter(item => item.x && item.y)
 									.map(item => {
+										item.dateString = item.x;
 										item.x = new Date(item.x);
 										return item;
 									})
@@ -67,6 +73,7 @@
 								dataPoints: result.us
 									.filter(item => item.x && item.y)
 									.map(item => {
+										item.dateString = item.x;
 										item.x = new Date(item.x);
 										return item;
 									})
@@ -74,13 +81,14 @@
 							{
 								type: "line",
 								showInLegend: true,
-								name: "Ask",
+								name: "Bid",
 								color: "#b28155",
 								lineThickness: 2,
 
-								dataPoints: result.asks
+								dataPoints: result.bids
 									.filter(item => item.x && item.y)
 									.map(item => {
+										item.dateString = item.x;
 										item.x = new Date(item.x);
 										return item;
 									})
