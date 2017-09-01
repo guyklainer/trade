@@ -10,7 +10,7 @@
 		<script>
 			// code to draw graph
 			jQuery.ajax({
-				url: "/chart",
+				url: "/chart" + document.location.search,
 				success: function( result ) {
 					console.log(result.bids
 						.filter(item => item.x && item.y)
