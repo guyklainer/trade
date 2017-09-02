@@ -22,9 +22,11 @@
 							contentFormatter: e => {
 								var str = `${e.entries[0].dataPoint.dateString}<br>`;
 								for (var i = 0; i < e.entries.length; i++){
-									var  temp = `<span style="color: ${e.entries[i].dataSeries.color}">${e.entries[i].dataSeries.name}:</span> ${e.entries[i].dataPoint.y}`;
+									var  temp = `<span style="color: ${e.entries[i].dataSeries.color}">${e.entries[i].dataSeries.name}:</span> ${e.entries[i].dataPoint.y.toFixed(2)}`;
 									if(i == 0 || i == 2 )
-										temp += ` (${((100*(e.entries[i].dataPoint.y/e.entries[1].dataPoint.y))-100).toFixed(2)}%)`;
+										temp += ` (${e.entries[i].dataPoint.percent.toFixed(2)}%)`;
+									else
+										temp += ` (${e.entries[i].dataPoint.us_price.toFixed(2)})`;
 
 									str = str.concat(`${temp}<br>`);
 								}
@@ -54,7 +56,7 @@
 								lineThickness: 2,
 								name: "Ask",
 								markerType: "square",
-								color: "#F08080",
+								color: "red",
 								dataPoints: result.asks
 									.filter(item => item.x && item.y)
 									.map(item => {
@@ -67,7 +69,7 @@
 								type: "line",
 								showInLegend: true,
 								name: "US Price",
-								color: "#20B2AA",
+								color: "#000",
 								lineThickness: 2,
 
 								dataPoints: result.us
@@ -82,7 +84,7 @@
 								type: "line",
 								showInLegend: true,
 								name: "Bid",
-								color: "#b28155",
+								color: "green",
 								lineThickness: 2,
 
 								dataPoints: result.bids
