@@ -1,6 +1,7 @@
 <html>
 	<head>
 		<title>Chart-mysql demo</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 		<script
 				src="https://code.jquery.com/jquery-3.2.1.min.js"
 				integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
@@ -9,110 +10,146 @@
 		<script src="canvas.js"></script>
 		<script>
 			// code to draw graph
-			jQuery.ajax({
-				url: "/chart" + document.location.search,
-				success: function( result ) {
-					var chart = new CanvasJS.Chart("chartContainer", {
-						title: {
-							text: "Test",
-							fontSize: 30
-						},
-						toolTip: {
-							shared: true,
-							contentFormatter: e => {
-								var str = `${e.entries[0].dataPoint.dateString}<br>`;
-								for (var i = 0; i < e.entries.length; i++){
-									var  temp = `<span style="color: ${e.entries[i].dataSeries.color}">${e.entries[i].dataSeries.name}:</span> ${e.entries[i].dataPoint.y.toFixed(2)}`;
-									if(i == 0 || i == 2 )
-										temp += ` (${e.entries[i].dataPoint.percent.toFixed(2)}%)`;
-									else
-										temp += ` (${e.entries[i].dataPoint.us_price.toFixed(2)})`;
+			getData(document.location.search.split("=")[1]).then(result => {
+				var chart = new CanvasJS.Chart("chartContainer", {
+					title: {
+						text: "Test",
+						fontSize: 30
+					},
+					toolTip: {
+						shared: true,
+						contentFormatter: e => {
+							var str = `${e.entries[0].dataPoint.dateString}<br>`;
+							for (var i = 0; i < e.entries.length; i++){
+								var  temp = `<span style="color: ${e.entries[i].dataSeries.color}">${e.entries[i].dataSeries.name}:</span> ${e.entries[i].dataPoint.y.toFixed(2)}`;
+								if(i == 0 || i == 2 )
+									temp += ` (${e.entries[i].dataPoint.percent.toFixed(2)}%)`;
+								else
+									temp += ` (${e.entries[i].dataPoint.us_price.toFixed(2)})`;
 
-									str = str.concat(`${temp}<br>`);
-								}
-								return (str);
+								str = str.concat(`${temp}<br>`);
 							}
-						},
-						animationEnabled: true,
-						axisX: {
-							gridColor: "Silver",
-							tickColor: "silver",
-							valueFormatString: "DD/MM HH:mm:ss"
-						},
-						theme: "theme2",
-						axisY: {
-							includeZero: false,
-							gridColor: "Silver",
-							tickColor: "silver"
-						},
-						legend: {
-							verticalAlign: "center",
-							horizontalAlign: "right"
-						},
-						data: [
-							{
-								type: "line",
-								showInLegend: true,
-								lineThickness: 2,
-								name: "Ask",
-								markerType: "square",
-								color: "red",
-								dataPoints: result.asks
-									.filter(item => item.x && item.y)
-									.map(item => {
-										item.dateString = item.x;
-										item.x = new Date(item.x);
-										return item;
-									})
-							},
-							{
-								type: "line",
-								showInLegend: true,
-								name: "US Price",
-								color: "#000",
-								lineThickness: 2,
-
-								dataPoints: result.us
-									.filter(item => item.x && item.y)
-									.map(item => {
-										item.dateString = item.x;
-										item.x = new Date(item.x);
-										return item;
-									})
-							},
-							{
-								type: "line",
-								showInLegend: true,
-								name: "Bid",
-								color: "green",
-								lineThickness: 2,
-
-								dataPoints: result.bids
-									.filter(item => item.x && item.y)
-									.map(item => {
-										item.dateString = item.x;
-										item.x = new Date(item.x);
-										return item;
-									})
-							}
-						],
-						legend: {
-							cursor: "pointer",
-							itemclick: function (e) {
-								if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-									e.dataSeries.visible = false;
-								}
-								else {
-									e.dataSeries.visible = true;
-								}
-								chart.render();
-							}
+							return (str);
 						}
+					},
+					animationEnabled: true,
+					axisX: {
+						gridColor: "Silver",
+						tickColor: "silver",
+						valueFormatString: "DD/MM HH:mm:ss"
+					},
+					theme: "theme2",
+					axisY: {
+						includeZero: false,
+						gridColor: "Silver",
+						tickColor: "silver"
+					},
+					legend: {
+						verticalAlign: "center",
+						horizontalAlign: "right"
+					},
+					data: [
+						{
+							type: "line",
+							showInLegend: true,
+							lineThickness: 2,
+							name: "Ask",
+							markerType: "square",
+							color: "red",
+							dataPoints: result.asks
+								.filter(item => item.x && item.y)
+								.map(item => {
+									item.dateString = item.x;
+									item.x = new Date(item.x);
+									return item;
+								})
+						},
+						{
+							type: "line",
+							showInLegend: true,
+							name: "US Price",
+							color: "#000",
+							lineThickness: 2,
+
+							dataPoints: result.us
+								.filter(item => item.x && item.y)
+								.map(item => {
+									item.dateString = item.x;
+									item.x = new Date(item.x);
+									return item;
+								})
+						},
+						{
+							type: "line",
+							showInLegend: true,
+							name: "Bid",
+							color: "green",
+							lineThickness: 2,
+
+							dataPoints: result.bids
+								.filter(item => item.x && item.y)
+								.map(item => {
+									item.dateString = item.x;
+									item.x = new Date(item.x);
+									return item;
+								})
+						}
+					],
+					legend: {
+						cursor: "pointer",
+						itemclick: function (e) {
+							if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+								e.dataSeries.visible = false;
+							}
+							else {
+								e.dataSeries.visible = true;
+							}
+							chart.render();
+						}
+					}
+				});
+
+				chart.render();
+			});
+
+			function getData(date){
+				let repeats = 0,
+					calls = [],
+					now = moment();
+
+				date = date || now.subtract(1, 'd');
+				date = moment(date);
+
+				let until = moment(date).add(12, 'h').endOf('hour');
+				if(until.isAfter(now))
+					until = now;
+
+				while( repeats++ < 30 && moment(date).isBefore(now) && (until.isBefore(now) || until.isSame(now))){
+					calls.push(new Promise((resolve, reject) => {
+						console.log(`${date} - ${until}`);
+						jQuery.get( `/chart?start_date=${date}&end_date=${until}`, res => {
+							resolve(res);
+						});
+					}));
+
+					date = moment(until.add(1,'h').startOf('hour').format());
+					until = until.add(12,'h').endOf('hour');
+					if(until.isAfter(now))
+						until = moment(now);
+				}
+
+				return Promise.all(calls).then(results => {
+					let concatenatedResult = { bids: [], asks: [], us: []};
+
+					results.forEach(res => {
+						concatenatedResult.bids.push(...res.bids);
+						concatenatedResult.asks.push(...res.asks);
+						concatenatedResult.us.push(...res.us);
 					});
 
-					chart.render();
-				}
-			});
+					return concatenatedResult;
+				});
+			}
 		</script>
 	</head>
 
