@@ -114,26 +114,31 @@
 
 			function getData(date){
 				let repeats = 0,
+					gap = 3;
 					calls = [],
 					now = moment();
 
 				date = date || now.subtract(1, 'd');
 				date = moment(date);
 
-				let until = moment(date).add(12, 'h').endOf('hour');
+				let until = moment(date).add(gap, 'h').endOf('hour');
 				if(until.isAfter(now))
 					until = now;
 
 				while( repeats++ < 30 && moment(date).isBefore(now) && (until.isBefore(now) || until.isSame(now))){
 					calls.push(new Promise((resolve, reject) => {
-						console.log(`${date} - ${until}`);
-						jQuery.get( `/chart?start_date=${date}&end_date=${until}`, res => {
-							resolve(res);
-						});
+						(function(date,until){
+							setTimeout(_=> {
+								console.log(`${date} - ${until}`);
+								jQuery.get( `/chart?start_date=${date}&end_date=${until}`, res => {
+									resolve(res);
+								}).fail(_ => resolve({}));
+							},100*repeats);
+						})(date.toString(), until.toString());
 					}));
 
 					date = moment(until.add(1,'h').startOf('hour').format());
-					until = until.add(12,'h').endOf('hour');
+					until = until.add(gap,'h').endOf('hour');
 					if(until.isAfter(now))
 						until = moment(now);
 				}
