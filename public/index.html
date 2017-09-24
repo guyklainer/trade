@@ -132,7 +132,7 @@
 								console.log(`${date} - ${until}`);
 								jQuery.get( `/chart?start_date=${date}&end_date=${until}`, res => {
 									resolve(res);
-								}).fail(_ => resolve({}));
+								}).fail(_ => resolve({bids:[], asks: [], us: []}));
 							},100*repeats);
 						})(date.toString(), until.toString());
 					}));
