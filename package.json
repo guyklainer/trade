@@ -12,9 +12,11 @@
     "bit2c": "0.0.6",
     "bitstamp": "^1.0.2",
     "chalk": "^2.1.0",
+    "debug": "^3.0.1",
     "express": "^4.15.4",
     "get-exchange-rates-usd": "^1.0.0",
     "moment": "^2.18.1",
-    "mysql": "^2.14.1"
+    "mysql": "^2.14.1",
+    "uuid": "^3.1.0"
   }
 }
