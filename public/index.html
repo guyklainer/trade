@@ -114,7 +114,7 @@
 
 			function getData(date){
 				let repeats = 0,
-					gap = 3;
+					gap = 3,
 					calls = [],
 					now = moment();
 
@@ -125,15 +125,14 @@
 				if(until.isAfter(now))
 					until = now;
 
-				while( repeats++ < 30 && moment(date).isBefore(now) && (until.isBefore(now) || until.isSame(now))){
+				while( repeats++ < 60 && moment(date).isBefore(now) && (until.isBefore(now) || until.isSame(now))){
 					calls.push(new Promise((resolve, reject) => {
 						(function(date,until){
 							setTimeout(_=> {
 								console.log(`${date} - ${until}`);
-								jQuery.get( `/chart?start_date=${date}&end_date=${until}`, res => {
-									resolve(res);
-								}).fail(_ => resolve({bids:[], asks: [], us: []}));
-							},100*repeats);
+								jQuery.get( `/chart?start_date=${date}&end_date=${until}`, resolve)
+									.fail(_ => resolve({bids:[], asks: [], us: []}));
+							},300*repeats);
 						})(date.toString(), until.toString());
 					}));
 
